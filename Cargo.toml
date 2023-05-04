@@ -6,6 +6,7 @@ description = "A library for interacting with the Algolia Monitoring API"
 authors = ["Sardorbek Pulatov <sardo@hey.com>"]
 homepage = "https://github.com/oneslash/algolia-monitoring-rs"
 repository = "https://github.com/oneslash/algolia-monitoring-rs"
+license = "Apache-2.0"
 
 [lib]
 name = "algolia_monitoring_rs"
