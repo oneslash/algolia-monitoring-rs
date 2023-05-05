@@ -74,6 +74,7 @@ impl AlgoliaMonitoring {
     }
 
     /// Get the status of the Algolia servers
+    /// `servers` is an optional list of servers to get the status of, if None, all servers are returned
     pub async fn get_status(&self, servers: Option<Vec<String>>) -> Result<Status, Error> {
         let servers = match servers.map(|s| s.join(",")) {
             Some(s) => format!("/{}", s),
@@ -84,6 +85,8 @@ impl AlgoliaMonitoring {
         self.fetch_data::<Status>(path.as_str()).await
     }
 
+    /// Get the incidents of the Algolia servers
+    /// `servers` is an optional list of servers to get the incidents of, if None, all servers are returned
     pub async fn get_incidents(&self, servers: Option<Vec<String>>) -> Result<Incidents, Error> {
         let servers = match servers.map(|s| s.join(",")) {
             Some(s) => format!("/{}", s),
@@ -93,16 +96,21 @@ impl AlgoliaMonitoring {
         self.fetch_data::<Incidents>(path.as_str()).await
     }
 
+    /// Get the inventory of the Algolia servers
     pub async fn get_inventory(&self) -> Result<Inventory, Error> {
         self.fetch_data::<Inventory>("inventory").await
     }
 
+    /// Get the latency of the Algolia servers
+    /// `servers` is a list of servers to get the latency of
     pub async fn get_latency(&self, servers: Vec<String>) -> Result<Metrics, Error> {
         let servers = servers.join(",");
         let path = format!("latency/{}", servers);
         self.fetch_data::<Metrics>(path.as_str()).await
     }
 
+    /// This method gets the reachability for the servers passed in the URL
+    /// `servers` is a list of servers to get the reachability of
     pub async fn get_reachability(&self, servers: Vec<String>) -> Result<Metrics, Error> {
         let servers = servers.join(",");
         let path = format!("reachability/{}/probes", servers);

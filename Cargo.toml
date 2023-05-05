@@ -7,6 +7,8 @@ authors = ["Sardorbek Pulatov <sardo@hey.com>"]
 homepage = "https://github.com/oneslash/algolia-monitoring-rs"
 repository = "https://github.com/oneslash/algolia-monitoring-rs"
 license = "Apache-2.0"
+readme = "README.md"
+keywords = ["algolia", "monitoring", "api", "rust"]
 
 [lib]
 name = "algolia_monitoring_rs"
