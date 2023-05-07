@@ -56,6 +56,16 @@ pub struct MetricsGroup {
     latency: Option<HashMap<String, Vec<DataPoint>>>,
     #[serde(default)]
     indexing: Option<HashMap<String, Vec<DataPoint>>>,
+    #[serde(default)]
+    avg_build_time: Option<HashMap<String, Vec<DataPoint>>>,
+    #[serde(default)]
+    ssd_usage: Option<HashMap<String, Vec<DataPoint>>>,
+    #[serde(default)]
+    ram_search_usage: Option<HashMap<String, Vec<DataPoint>>>,
+    #[serde(default)]
+    ram_indexing_usage: Option<HashMap<String, Vec<DataPoint>>>,
+    #[serde(default)]
+    cpu_usage: Option<HashMap<String, Vec<DataPoint>>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -64,12 +74,12 @@ pub struct Metrics {
 }
 
 pub struct AlgoliaMonitoring {
-    api_key: String,
-    app_id: String,
+    api_key: Option<String>,
+    app_id: Option<String>,
 }
 
 impl AlgoliaMonitoring {
-    pub fn new(api_key: String, app_id: String) -> Self {
+    pub fn new(api_key: Option<String>, app_id: Option<String>) -> Self {
         AlgoliaMonitoring { api_key, app_id }
     }
 
@@ -117,10 +127,31 @@ impl AlgoliaMonitoring {
         self.fetch_data::<Metrics>(path.as_str()).await
     }
 
+    /// This method gets a metric over a period of time
+    /// `metric` is the metric to get
+    /// - `avg_build_time`: Average build time of the indices in seconds
+    /// - `ssd_usage`: proportion of SSD vs RAM usage in % (0% means no SSD utilization, 32 GB storage used on 64 GB RAM system is 50%)
+    /// - `ram_search_usage`: RAM usage for the search in MB
+    /// - `ram_indexing_usage`: RAM usage for the indexing in MB
+    /// - `cpu_usage`: proportion of CPU idleness in % (0% means the CPU isn’t idle)
+    /// - `*`: All of the above
+    /// `period` is the period of time to get the metric over
+    /// - `minute`: 1 minute ago, 1 point per 10 seconds (10 points)
+    /// - `hour`: 1 hour ago, 1 point per 1 minute (60 points)
+    /// - `day`: 1 day ago, 1 point per 10 minutes (144 points)
+    /// - `week`: 1 week ago, 1 point per 1 hour (168 points)
+    /// - `month`: 1 month ago, 1 point per 1 day (30 points)
+    pub async fn get_infrastructure_metrics(&self, metric: String, period: String) -> Result<Metrics, Error> {
+        let path = format!("infrastructure/{}/period/{}", metric, period);
+        self.fetch_data::<Metrics>(path.as_str()).await
+    }
+
     fn get_http_client(&self) -> Result<Client, reqwest::Error> {
         let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert("X-Algolia-API-Key", self.api_key.parse().unwrap());
-        headers.insert("X-Algolia-Application-Id", self.app_id.parse().unwrap());
+        if !self.api_key.is_some() && !self.app_id.is_some() {
+            headers.insert("X-Algolia-API-Key", self.api_key.unwrap().parse().unwrap());
+            headers.insert("X-Algolia-Application-Id", self.app_id.unwrap().parse().unwrap());
+        }
         Client::builder().default_headers(headers).build()
     }
 
@@ -149,7 +180,7 @@ mod tests {
     use super::*;
 
     fn create_algolia_monitoring() -> AlgoliaMonitoring {
-        AlgoliaMonitoring::new("your_api_key".to_string(), "your_app_id".to_string())
+        AlgoliaMonitoring::new(Some("your_api_key".to_string()), Some("your_app_id".to_string()))
     }
 
     #[test]
