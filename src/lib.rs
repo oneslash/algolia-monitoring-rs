@@ -149,8 +149,8 @@ impl AlgoliaMonitoring {
     fn get_http_client(&self) -> Result<Client, reqwest::Error> {
         let mut headers = reqwest::header::HeaderMap::new();
         if !self.api_key.is_some() && !self.app_id.is_some() {
-            headers.insert("X-Algolia-API-Key", self.api_key.unwrap().parse().unwrap());
-            headers.insert("X-Algolia-Application-Id", self.app_id.unwrap().parse().unwrap());
+            headers.insert("X-Algolia-API-Key", self.api_key.as_ref().unwrap().parse().unwrap());
+            headers.insert("X-Algolia-Application-Id", self.app_id.as_ref().unwrap().parse().unwrap());
         }
         Client::builder().default_headers(headers).build()
     }
@@ -186,7 +186,7 @@ mod tests {
     #[test]
     fn test_new() {
         let algolia_monitoring = create_algolia_monitoring();
-        assert_eq!(algolia_monitoring.api_key, "your_api_key");
-        assert_eq!(algolia_monitoring.app_id, "your_app_id");
+        assert_eq!(algolia_monitoring.api_key, Some("your_api_key".to_string()));
+        assert_eq!(algolia_monitoring.app_id, Some("your_app_id".to_string()));
     }
 }
