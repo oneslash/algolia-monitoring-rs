@@ -149,8 +149,8 @@ impl AlgoliaMonitoring {
     fn get_http_client(&self) -> Result<Client, reqwest::Error> {
         let mut headers = reqwest::header::HeaderMap::new();
         if !self.api_key.is_some() && !self.app_id.is_some() {
-            headers.insert("X-Algolia-API-Key", self.api_key.unwrap().parse().unwrap());
-            headers.insert("X-Algolia-Application-Id", self.app_id.unwrap().parse().unwrap());
+            headers.insert("X-Algolia-API-Key", self.api_key.as_ref().unwrap().parse().unwrap());
+            headers.insert("X-Algolia-Application-Id", self.app_id.as_ref().unwrap().parse().unwrap());
         }
         Client::builder().default_headers(headers).build()
     }
