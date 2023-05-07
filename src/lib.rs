@@ -186,7 +186,7 @@ mod tests {
     #[test]
     fn test_new() {
         let algolia_monitoring = create_algolia_monitoring();
-        assert_eq!(algolia_monitoring.api_key, "your_api_key");
-        assert_eq!(algolia_monitoring.app_id, "your_app_id");
+        assert_eq!(Some(algolia_monitoring.api_key), Some("your_api_key".to_string()));
+        assert_eq!(Some(algolia_monitoring.app_id), Some("your_app_id".to_string()));
     }
 }
