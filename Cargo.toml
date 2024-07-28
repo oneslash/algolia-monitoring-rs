@@ -1,6 +1,6 @@
 [package]
 name = "algolia-monitoring-rs"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 description = "A library for interacting with the Algolia Monitoring API"
 authors = ["Sardorbek Pulatov <sardo@hey.com>"]
@@ -15,7 +15,7 @@ name = "algolia_monitoring_rs"
 path = "src/lib.rs"
 
 [dependencies]
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.12", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
